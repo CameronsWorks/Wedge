@@ -1,0 +1,42 @@
+{
+  "type": "wedge",
+  "presetBatch": 4,
+  "isBoss": true,
+  "mustHaveUniqueName": false,
+  "durability": {
+    "armor": {
+      "maxDelta": 1,
+      "minDelta": 0,
+      "minLimitPercent": 99,
+      "lowestMaxPercent": 99,
+      "highestMaxPercent": 100
+    },
+    "weapon": {
+      "highestMax": 100,
+      "lowestMax": 99,
+      "maxDelta": 1,
+      "minDelta": 0,
+      "minLimitPercent": 99
+    }
+  },
+  "itemSpawnLimits": {
+    "5734758f24597738025ee253": 1
+  },
+  "equipment": {
+    "faceShieldIsActiveChancePercent": 100,
+    "forceOnlyArmoredRigWhenNoArmor": false,
+    "forceStock": true,
+    "laserIsActiveChancePercent": 75,
+    "lightIsActiveDayChancePercent": 25,
+    "lightIsActiveNightChancePercent": 75,
+    "nvgIsActiveChanceDayPercent": 10,
+    "nvgIsActiveChanceNightPercent": 100,
+    "randomisation": []
+  },
+  "currencyStackSize": {
+    "5449016a4bdc2d6f028b456f": { "10": 0 },
+    "5696686a4bdc2da3298b456a": { "500": 4, "1000": 3, "2500": 2, "5000": 1 },
+    "569668774bdc2da2298b4568": { "500": 4, "1000": 3, "2500": 2, "5000": 1 },
+    "5d235b4d86f7742e017bc88a": { "10": 0 }
+  }
+}

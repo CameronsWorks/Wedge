@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <AssemblyName>Wedge.Prepatch</AssemblyName>
+    <RootNamespace>Wedge.Prepatch</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <SptRoot>$(MSBuildProjectDirectory)\..\..\..\..</SptRoot>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- BepInEx's OWN bundled Cecil (0.10.4) — must match the AssemblyDefinition the
+         preloader passes to Patch(); the newer Cecil shipped with the server would not. -->
+    <Reference Include="Mono.Cecil"><HintPath>$(SptRoot)\BepInEx\core\Mono.Cecil.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="BepInEx"><HintPath>$(SptRoot)\BepInEx\core\BepInEx.dll</HintPath><Private>false</Private></Reference>
+    <!-- The custom-role machinery (CustomWildSpawnType / SAINSettings / manager). -->
+    <Reference Include="MoreBotsPrepatch"><HintPath>$(SptRoot)\BepInEx\patchers\MoreBotsPrepatch.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+
+  <Target Name="DeployToPatchers" AfterTargets="Build">
+    <MakeDir Directories="$(SptRoot)\BepInEx\patchers\Wedge" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SptRoot)\BepInEx\patchers\Wedge" ContinueOnError="true" />
+  </Target>
+
+</Project>

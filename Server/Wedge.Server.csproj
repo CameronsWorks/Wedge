@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <AssemblyName>Wedge.Server</AssemblyName>
+    <RootNamespace>Wedge.Server</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <OutputType>Library</OutputType>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <SptServer>$(MSBuildProjectDirectory)\..\..\..\..\SPT</SptServer>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Local HintPaths to the deployed server, not NuGet: keeps compile-time signatures in
+         lockstep with the host process (the published package lags the installed build). -->
+    <Reference Include="SPTarkov.Common"><HintPath>$(SptServer)\SPTarkov.Common.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="SPTarkov.DI"><HintPath>$(SptServer)\SPTarkov.DI.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="SPTarkov.Server.Core"><HintPath>$(SptServer)\SPTarkov.Server.Core.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="SPTarkov.Reflection"><HintPath>$(SptServer)\SPTarkov.Reflection.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="SemanticVersioning"><HintPath>$(SptServer)\SemanticVersioning.dll</HintPath><Private>false</Private></Reference>
+    <!-- Custom-role registration API (already installed as a normal server mod). -->
+    <Reference Include="MoreBotsServer"><HintPath>$(SptServer)\user\mods\MoreBotsServer\MoreBotsServer.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+
+  <Target Name="DeployToServer" AfterTargets="Build">
+    <MakeDir Directories="$(SptServer)\user\mods\Wedge" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SptServer)\user\mods\Wedge" ContinueOnError="true" />
+    <ItemGroup>
+      <WedgeDb Include="$(MSBuildProjectDirectory)\db\**\*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(WedgeDb)" DestinationFiles="@(WedgeDb->'$(SptServer)\user\mods\Wedge\db\%(RecursiveDir)%(Filename)%(Extension)')" ContinueOnError="true" />
+    <!-- Ship the default config, but never overwrite one the user has edited. -->
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\config.jsonc" DestinationFolder="$(SptServer)\user\mods\Wedge" Condition="!Exists('$(SptServer)\user\mods\Wedge\config.jsonc')" ContinueOnError="true" />
+  </Target>
+
+</Project>

@@ -1,0 +1,37 @@
+{
+  // Wedge spawn config. Restart the SPT server after editing.
+  "debugLogs": false,
+
+  // Spawn chance scales with the raid's level: 10% at level 15, +5% every 5 levels, capped at 25%
+  // (e.g. lvl 20 = 15%, lvl 30+ = 25%).
+  "levelScaling": true,
+
+  // Co-op: average the level of everyone signed in to the server instead of just the host, so the
+  // chance tracks the whole squad. Off = host's level only. Solo plays the same either way.
+  "groupScaling": true,
+
+  // How recently a player must have pinged the server to count toward the group average, in minutes.
+  "groupWindowMinutes": 15,
+
+  "baseLevel": 15,
+  "baseChance": 10,
+  "chancePerStep": 5,
+  "stepLevels": 5,
+  "chanceCap": 25,
+
+  // Flat chance used only when levelScaling is false.
+  "flatChance": 15,
+
+  // Guards escorting Wedge.
+  "escortAmount": "3",
+
+  // Spawn Wedge and his guards in one zone so they arrive together.
+  "singleZone": true,
+
+  // Maps Wedge can spawn on. Remove an entry to disable it.
+  "enabledMaps": [
+    "rezervbase", "tarkovstreets", "bigmap", "factory4_day", "factory4_night",
+    "interchange", "laboratory", "lighthouse", "sandbox", "sandbox_high",
+    "shoreline", "woods", "labyrinth"
+  ]
+}
