@@ -6,8 +6,9 @@ He turns up in his own kit and comes looking for you.
 ## What it adds
 
 His own spawn type and brain rather than a reskinned existing boss. Spiritus LV-119 plate carrier, Team
-Wendy EXFIL, an Avon M53A1 gas mask, and his weapons: SCAR-H, SA58, MDR or MP7, a USP .45, and a SOG
-tomahawk. Gear spawns at near-perfect durability and he has 880 health, roughly double a PMC.
+Wendy EXFIL with L3Harris PVS-31A night vision on a Wilcox mount, an Avon M53A1 gas mask, and his weapons:
+SCAR-H, SA58, MDR or MP7, a USP .45, and a SOG tomahawk. Gear spawns at near-perfect durability and he has
+880 health, roughly double a PMC.
 
 His face and clothing are assembled from Black Division parts, not his real 1.0.5 art — nothing ships that
 art yet, so the appearance is a close stand-in rather than the genuine article.
