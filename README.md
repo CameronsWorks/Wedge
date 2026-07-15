@@ -5,9 +5,12 @@ He turns up in his own kit and comes looking for you.
 
 ## What it adds
 
-A genuinely new boss rather than a reskin. Spiritus LV-119 plate carrier, Team Wendy EXFIL, L3Harris
-PVS-31A night vision, an Avon M53A1 gas mask, and his weapons: SCAR-H, SA58, MDR or MP7, a USP .45, and a
-SOG tomahawk. Gear spawns at near-perfect durability and he carries roughly twice a PMC's health.
+His own spawn type and brain rather than a reskinned existing boss. Spiritus LV-119 plate carrier, Team
+Wendy EXFIL, an Avon M53A1 gas mask, and his weapons: SCAR-H, SA58, MDR or MP7, a USP .45, and a SOG
+tomahawk. Gear spawns at near-perfect durability and he has 880 health, roughly double a PMC.
+
+His face and clothing are assembled from Black Division parts, not his real 1.0.5 art — nothing ships that
+art yet, so the appearance is a close stand-in rather than the genuine article.
 
 The brain is the part worth caring about. He pushes toward the nearest player instead of holding a corner,
 opens with flash and smoke on the approach, and hands the actual gunfight off to SAIN so he still shoots
@@ -28,7 +31,7 @@ when Windows asks, then restart the server.
 ## Requires
 
 - **MoreBotsAPI** — supplies the custom boss role. Without it there's no role to spawn him into.
-- **WTT-ContentBackport** — his gear and appearance.
+- **WTT-ContentBackport** — the Black Division gear and clothing he's built out of.
 - **DrakiaXYZ-BigBrain** — hard dependency for the rush layer.
 
 Optional: **SAIN** (found by reflection, no assembly reference — without it he still spawns and rushes, he
