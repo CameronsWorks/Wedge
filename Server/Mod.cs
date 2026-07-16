@@ -15,10 +15,14 @@ public record ModMetadata : AbstractModMetadata
     public override string Name { get; init; } = "Wedge";
     public override string Author { get; init; } = "Sipto";
     public override List<string>? Contributors { get; init; }
-    public override SemanticVersioning.Version Version { get; init; } = new(0, 1, 1);
+    public override SemanticVersioning.Version Version { get; init; } = new(0, 1, 2);
     public override SemanticVersioning.Range SptVersion { get; init; } = new("~4.0.0");
     public override List<string>? Incompatibilities { get; init; }
-    public override Dictionary<string, SemanticVersioning.Range>? ModDependencies { get; init; }
+    public override Dictionary<string, SemanticVersioning.Range>? ModDependencies { get; init; } = new()
+    {
+        ["com.morebotsapi.tacticaltoaster"] = new(">=2.0.0"),
+        ["com.wtt.commonlib"] = new(">=2.0.0"),
+    };
     public override string? Url { get; init; }
     public override bool? IsBundleMod { get; init; }
     public override string License { get; init; } = "MIT";
@@ -33,6 +37,7 @@ public class WedgeRegistration(
     MoreBotsAPI moreBotsLib,
     MoreBotsCustomBotTypeService customBotTypeService,
     FactionService factionService,
+    WTTServerCommonLib.WTTServerCommonLib commonLib,
     ISptLogger<WedgeRegistration> logger
 ) : IOnLoad
 {
@@ -46,6 +51,11 @@ public class WedgeRegistration(
         // Boss and guard are distinct templates, so load each shared file on its own name.
         await moreBotsLib.LoadBotsShared(asm, "wedge", ["wedge"]);
         await moreBotsLib.LoadBotsShared(asm, "wedgeguard", ["wedgeguard"]);
+
+        // db\CustomLocales holds the ScavRole/* names the raid-end screen prints for the two roles.
+        // MoreBots has no locale loader of its own — the folder is a WTT convention and stays inert
+        // without this call, leaving the screen to render the raw key ("SCAVROLE/WEDGE").
+        await commonLib.CustomLocaleService.CreateCustomLocales(asm);
 
         customBotTypeService.AddCustomWildSpawnTypeNames(new Dictionary<int, string>
         {

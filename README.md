@@ -39,7 +39,9 @@ All three of these. None are optional — he won't run without them.
 - **MoreBotsAPI** (`com.morebotsapi.tacticaltoaster`) — supplies the custom boss role he spawns as. The
   server mod references it directly, so it won't load without it. Needs DrakiaXYZ-BigBrain itself.
 - **WTT-ContentBackport** (`com.wtt.contentbackport`) — every piece of his Black Division gear and clothing.
-  Its server half needs WTT-ServerCommonLib; installing the set normally brings WTT-ClientCommonLib too.
+  Its server half needs **WTT-ServerCommonLib** (`com.wtt.commonlib`), which this also uses directly to
+  register the names the end-of-raid screen shows for him and his guards. Installing the WTT set normally
+  brings WTT-ClientCommonLib along too.
 - **DrakiaXYZ-BigBrain** (`xyz.drakia.bigbrain`) — the rush layer registers against it. BepInEx skips the
   plugin without it.
 

@@ -21,6 +21,9 @@
     <Reference Include="SemanticVersioning"><HintPath>$(SptServer)\SemanticVersioning.dll</HintPath><Private>false</Private></Reference>
     <!-- Custom-role registration API (already installed as a normal server mod). -->
     <Reference Include="MoreBotsServer"><HintPath>$(SptServer)\user\mods\MoreBotsServer\MoreBotsServer.dll</HintPath><Private>false</Private></Reference>
+    <!-- Loads db\CustomLocales into the global locale table; comes in with WTT-ContentBackport,
+         which is already a hard requirement for his gear. -->
+    <Reference Include="WTT-ServerCommonLib"><HintPath>$(SptServer)\user\mods\WTT-ServerCommonLib\WTT-ServerCommonLib.dll</HintPath><Private>false</Private></Reference>
   </ItemGroup>
 
   <Target Name="DeployToServer" AfterTargets="Build">
