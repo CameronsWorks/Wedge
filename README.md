@@ -26,8 +26,11 @@ Scales with level: 10% at 15, another 5% every 5 levels, capped at 25%. Level 20
 
 ## Install
 
-Extract into your SPT folder — the one holding `SPT.Server.exe` and `BepInEx`. Merge `user` and `BepInEx`
-when Windows asks, then restart the server.
+Extract into your SPT folder — the one holding `EscapeFromTarkov.exe` and `BepInEx`. Merge `SPT` and
+`BepInEx` when Windows asks, then restart the server.
+
+Upgrading from 0.1.0: that build put the server mod in `user\mods\Wedge` at the install root by mistake,
+where the server never read it. Delete that stray `user` folder — the real one is `SPT\user\mods\Wedge`.
 
 ## Requires
 
@@ -49,7 +52,7 @@ throws grenades, he just fights on the vanilla brain; a failed interop logs a wa
 
 ## Config
 
-`user/mods/Wedge/config.jsonc`, server restart to apply:
+`SPT/user/mods/Wedge/config.jsonc`, server restart to apply:
 
 | Key | Default | What it does |
 |---|---|---|
@@ -70,7 +73,9 @@ you're doing — it has to stay below SAIN's combat layers at 20+ or he'll rush 
 
 ## Build
 
-`dotnet build -c Release` with the .NET SDK 8+. Three projects: `Client`, `Prepatch`, `Server`. `SptRoot` in
-each csproj resolves the SPT install; override it if your checkout isn't three folders down.
+`dotnet build -c Release` with the .NET SDK 9+. Three projects: `Client` and `Prepatch` on net472, `Server`
+on net9.0. They resolve the install through two different anchors — `SptRoot` (the game folder) in Client
+and Prepatch, `SptServer` (the `SPT` folder inside it) in Server. Override both if your checkout isn't
+three folders down.
 
 Built against SPT 4.0.13 / EFT 0.16.9.
