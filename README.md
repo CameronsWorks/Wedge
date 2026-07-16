@@ -31,13 +31,21 @@ when Windows asks, then restart the server.
 
 ## Requires
 
-- **MoreBotsAPI** — supplies the custom boss role. Without it there's no role to spawn him into.
-- **WTT-ContentBackport** — the Black Division gear and clothing he's built out of.
-- **DrakiaXYZ-BigBrain** — hard dependency for the rush layer.
+All three of these. None are optional — he won't run without them.
 
-Optional: **SAIN** (found by reflection, no assembly reference — without it he still spawns and rushes, he
-just fights on the vanilla brain) and **Fika** for co-op. A missing dependency logs a warning instead of
-crashing you out.
+- **MoreBotsAPI** (`com.morebotsapi.tacticaltoaster`) — supplies the custom boss role he spawns as. The
+  server mod references it directly, so it won't load without it. Needs DrakiaXYZ-BigBrain itself.
+- **WTT-ContentBackport** (`com.wtt.contentbackport`) — every piece of his Black Division gear and clothing.
+  Its server half needs WTT-ServerCommonLib; installing the set normally brings WTT-ClientCommonLib too.
+- **DrakiaXYZ-BigBrain** (`xyz.drakia.bigbrain`) — the rush layer registers against it. BepInEx skips the
+  plugin without it.
+
+Both MoreBotsAPI and WTT-ContentBackport ship as several parts — a plugin, a patcher and a server mod.
+Install them whole rather than picking out files.
+
+Optional: **SAIN** (found by reflection, no assembly reference — without it he still spawns, rushes and
+throws grenades, he just fights on the vanilla brain; a failed interop logs a warning and carries on) and
+**Fika** for co-op, which is also what the group-average spawn scaling needs.
 
 ## Config
 
