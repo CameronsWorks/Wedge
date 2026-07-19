@@ -4,12 +4,13 @@ using BepInEx.Logging;
 
 namespace Wedge.Client
 {
-    [BepInPlugin(PluginId, "Wedge", "2.0.0")]
+    [BepInPlugin(PluginId, "Wedge", "2.0.1")]
     [BepInDependency("com.fika.core", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency("xyz.drakia.bigbrain")]
     public class WedgePlugin : BaseUnityPlugin
     {
-        public const string PluginId = "com.sipto.wedge.client";
+        // Same id the server mod declares. The two halves are one mod and have to agree on it.
+        public const string PluginId = "com.sipto.wedge";
 
         // Must match the prepatcher + server dict. Pinned into EFT.WildSpawnType at preload.
         public const int WedgeType = 848430;
