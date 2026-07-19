@@ -24,7 +24,13 @@ namespace Wedge.Client.Brain
             BrainManager.AddCustomLayer(typeof(WedgeRushLayer),
                 new List<string> { "PMC" }, WedgePlugin.BrainPriority.Value, types);
 
-            WedgePlugin.Log.LogInfo($"[Wedge] rush layer registered at priority {WedgePlugin.BrainPriority.Value}");
+            // Guards only, and above SAIN combat so a cover or hold call can interrupt a firefight.
+            var guards = new List<WildSpawnType> { (WildSpawnType)WedgePlugin.WedgeGuardType };
+            BrainManager.AddCustomLayer(typeof(WedgeGuardLayer),
+                new List<string> { "PMC" }, WedgePlugin.CommandPriority.Value, guards);
+
+            WedgePlugin.Log.LogInfo($"[Wedge] rush layer p{WedgePlugin.BrainPriority.Value}, " +
+                                    $"command layer p{WedgePlugin.CommandPriority.Value}");
         }
     }
 }

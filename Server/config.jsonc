@@ -22,8 +22,15 @@
   // Flat chance used only when levelScaling is false.
   "flatChance": 15,
 
-  // Guards escorting Wedge.
+  // Guards escorting Wedge. Used as-is when partyScaling is false.
   "escortAmount": "3",
+
+  // Send more guards against a bigger party. Read from the same active-player list as the level
+  // average, so it counts everyone signed in to the server rather than this raid specifically.
+  "partyScaling": true,
+
+  // Guards by party size: solo, duo, then the last entry for anything larger.
+  "guardsByPartySize": [3, 4, 6],
 
   // Spawn Wedge and his guards in one zone so they arrive together.
   "singleZone": true,

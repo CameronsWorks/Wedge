@@ -8,7 +8,11 @@ namespace Wedge.Client.Brain
     // SAIN explicitly, so the gunfight always belongs to SAIN.
     internal class WedgeRushLayer : CustomLayer
     {
-        public WedgeRushLayer(BotOwner botOwner, int priority) : base(botOwner, priority) { }
+        // The layer is only built for our two types, so this doubles as the commander's spawn hook.
+        public WedgeRushLayer(BotOwner botOwner, int priority) : base(botOwner, priority)
+        {
+            WedgeCommander.Register(botOwner);
+        }
 
         public override string GetName() => "WedgeRush";
 

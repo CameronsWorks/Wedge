@@ -16,8 +16,17 @@ namespace Wedge.Client.Patches
         [PatchPostfix]
         static void Postfix()
         {
+            // Ahead of the host gate: the gas burns on every machine, so last raid's clouds have to be
+            // dropped on peers too. Tick() also clears itself once the game world goes away, which
+            // covers any client where this never runs.
+            Gas.GasCloud.Reset();
+
             if (!FikaBridge.IsHost()) return;
             if (!WedgePlugin.MasterEnable.Value) return;
+
+            // Runs per raid, so clear the commander before re-registering or last raid's dead
+            // BotOwners and group ids leak into this one.
+            Brain.WedgeCommander.Reset();
             Brain.LayerRegistration.EnsureRegistered();
         }
     }

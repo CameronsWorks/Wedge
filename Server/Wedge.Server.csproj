@@ -8,6 +8,7 @@
     <Nullable>enable</Nullable>
     <OutputType>Library</OutputType>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <DebugType>none</DebugType>
     <SptServer>$(MSBuildProjectDirectory)\..\..\..\..\SPT</SptServer>
   </PropertyGroup>
 
@@ -26,15 +27,24 @@
     <Reference Include="WTT-ServerCommonLib"><HintPath>$(SptServer)\user\mods\WTT-ServerCommonLib\WTT-ServerCommonLib.dll</HintPath><Private>false</Private></Reference>
   </ItemGroup>
 
-  <Target Name="DeployToServer" AfterTargets="Build">
+  <Target Name="DeployToServer" AfterTargets="Build" Condition="'$(SkipDeploy)' != 'true'">
     <MakeDir Directories="$(SptServer)\user\mods\Wedge" />
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SptServer)\user\mods\Wedge" ContinueOnError="true" />
+    <!-- Deliberately NOT ContinueOnError: a running server holds the DLL open, the copy fails, and the
+         build still reports success — leaving a stale mod deployed while you "verify" against old code. -->
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SptServer)\user\mods\Wedge" />
     <ItemGroup>
       <WedgeDb Include="$(MSBuildProjectDirectory)\db\**\*.*" />
     </ItemGroup>
     <Copy SourceFiles="@(WedgeDb)" DestinationFiles="@(WedgeDb->'$(SptServer)\user\mods\Wedge\db\%(RecursiveDir)%(Filename)%(Extension)')" ContinueOnError="true" />
     <!-- Ship the default config, but never overwrite one the user has edited. -->
     <Copy SourceFiles="$(MSBuildProjectDirectory)\config.jsonc" DestinationFolder="$(SptServer)\user\mods\Wedge" Condition="!Exists('$(SptServer)\user\mods\Wedge\config.jsonc')" ContinueOnError="true" />
+    <!-- His 1.0.5 art. Bundle keys mirror the live EFT paths, so the client resolves the prefabs
+         against its own shaders/cubemaps instead of anything we ship. -->
+    <ItemGroup>
+      <WedgeBundles Include="$(MSBuildProjectDirectory)\bundles\**\*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(WedgeBundles)" DestinationFiles="@(WedgeBundles->'$(SptServer)\user\mods\Wedge\bundles\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" ContinueOnError="true" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\bundles.json" DestinationFolder="$(SptServer)\user\mods\Wedge" ContinueOnError="true" />
   </Target>
 
 </Project>

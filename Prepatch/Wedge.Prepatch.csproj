@@ -7,6 +7,7 @@
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <DebugType>none</DebugType>
     <SptRoot>$(MSBuildProjectDirectory)\..\..\..\..</SptRoot>
   </PropertyGroup>
 
@@ -19,7 +20,7 @@
     <Reference Include="MoreBotsPrepatch"><HintPath>$(SptRoot)\BepInEx\patchers\MoreBotsPrepatch.dll</HintPath><Private>false</Private></Reference>
   </ItemGroup>
 
-  <Target Name="DeployToPatchers" AfterTargets="Build">
+  <Target Name="DeployToPatchers" AfterTargets="Build" Condition="'$(SkipDeploy)' != 'true'">
     <MakeDir Directories="$(SptRoot)\BepInEx\patchers\Wedge" />
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SptRoot)\BepInEx\patchers\Wedge" ContinueOnError="true" />
   </Target>

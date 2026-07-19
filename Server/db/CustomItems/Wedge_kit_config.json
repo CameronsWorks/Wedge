@@ -1,0 +1,133 @@
+{
+  "6a5bea01f2c4d9081b3a7e64": {
+    "itemTplToClone": "5a2a57cfc4a2826c6e06d44a",
+    "parentId": "543be6564bdc2df4348b4568",
+    "handbookParentId": "5b5f7a2386f774093f2ed3c4",
+    "overrideProperties": {
+      "Name": "weapon_grenade_m8230_container",
+      "ShortName": "weapon_grenade_m8230_container",
+      "Description": "weapon_grenade_m8230_container",
+      "Prefab": {
+        "path": "assets/content/weapons/m8230/weapon_grenade_m8230_container.bundle",
+        "rcid": ""
+      },
+      "Width": 1,
+      "Height": 1,
+      "RarityPvE": "Not_exist",
+      "CanSellOnRagfair": false,
+      "CanRequireOnRagfair": false,
+      "IsUnbuyable": true,
+      "IsUnsaleable": true,
+      "DiscardLimit": -1
+    },
+    "locales": {
+      "en": {
+        "name": "Model 8230 CS gas grenade",
+        "shortName": "8230",
+        "description": "A riot-control canister that floods an area with CS gas. Black Division use them to clear rooms they don't want to enter."
+      }
+    },
+    "fleaPriceRoubles": 0,
+    "handbookPriceRoubles": 34000,
+    "addtoInventorySlots": [],
+    "addtoModSlots": false,
+    "modSlot": [],
+    "addtoBots": false,
+    "addtoStaticLootContainers": false,
+    "staticLootContainers": [],
+    "addtoHallOfFame": false,
+    "hallOfFameSlots": [],
+    "addtoSpecialSlots": false,
+    "addtoSecureFilters": false,
+    "addtoTraders": false,
+    "traders": {},
+    "addWeaponPreset": false,
+    "weaponPresets": []
+  },
+  "6a5bea26b7d81f4a2e60c9d5": {
+    "itemTplToClone": "5bd704e7209c4d00d7167c31",
+    "parentId": "55818a594bdc2db9688b456a",
+    "handbookParentId": "5b5f757486f774093e6cb507",
+    "overrideProperties": {
+      "Name": "stock_mp7_fab_defense_ars_adapter",
+      "ShortName": "stock_mp7_fab_defense_ars_adapter",
+      "Description": "stock_mp7_fab_defense_ars_adapter",
+      "Prefab": {
+        "path": "assets/content/items/mods/stocks/stock_mp7_fab_defense_ars_adapter.bundle",
+        "rcid": ""
+      },
+      "RarityPvE": "Not_exist",
+      "CanSellOnRagfair": false,
+      "CanRequireOnRagfair": false,
+      "IsUnbuyable": true,
+      "IsUnsaleable": true,
+      "DiscardLimit": -1
+    },
+    "locales": {
+      "en": {
+        "name": "FAB Defense ARS MP7 stock adapter",
+        "shortName": "ARS MP7",
+        "description": "An ARS buffer-tube adapter for the MP7A1, letting it take a full-size stock."
+      }
+    },
+    "fleaPriceRoubles": 0,
+    "handbookPriceRoubles": 18000,
+    "addtoInventorySlots": [],
+    "addtoModSlots": true,
+    "modSlot": ["mod_stock"],
+    "addtoBots": false,
+    "addtoStaticLootContainers": false,
+    "staticLootContainers": [],
+    "addtoHallOfFame": false,
+    "hallOfFameSlots": [],
+    "addtoSpecialSlots": false,
+    "addtoSecureFilters": false,
+    "addtoTraders": false,
+    "traders": {},
+    "addWeaponPreset": false,
+    "weaponPresets": []
+  },
+  "6a5bea4ad3e8c17f5b2049ab": {
+    "itemTplToClone": "5ba26acdd4351e003562908e",
+    "parentId": "550aa4bf4bdc2dd6348b456b",
+    "handbookParentId": "5b5f724c86f774093f2ecf15",
+    "overrideProperties": {
+      "Name": "muzzle_mp7_surefire_sf3p_556_mp7_flash_hider_46x30",
+      "ShortName": "muzzle_mp7_surefire_sf3p_556_mp7_flash_hider_46x30",
+      "Description": "muzzle_mp7_surefire_sf3p_556_mp7_flash_hider_46x30",
+      "Prefab": {
+        "path": "assets/content/items/mods/muzzle/muzzle_mp7_surefire_sf3p_556_mp7_flash_hider_46x30.bundle",
+        "rcid": ""
+      },
+      "RarityPvE": "Not_exist",
+      "CanSellOnRagfair": false,
+      "CanRequireOnRagfair": false,
+      "IsUnbuyable": true,
+      "IsUnsaleable": true,
+      "DiscardLimit": -1
+    },
+    "locales": {
+      "en": {
+        "name": "SureFire SF3P 4.6x30 flash hider",
+        "shortName": "SF3P 4.6",
+        "description": "A three-prong SureFire flash hider threaded for the MP7A1."
+      }
+    },
+    "fleaPriceRoubles": 0,
+    "handbookPriceRoubles": 12000,
+    "addtoInventorySlots": [],
+    "addtoModSlots": true,
+    "modSlot": ["mod_muzzle"],
+    "addtoBots": false,
+    "addtoStaticLootContainers": false,
+    "staticLootContainers": [],
+    "addtoHallOfFame": false,
+    "hallOfFameSlots": [],
+    "addtoSpecialSlots": false,
+    "addtoSecureFilters": false,
+    "addtoTraders": false,
+    "traders": {},
+    "addWeaponPreset": false,
+    "weaponPresets": []
+  }
+}

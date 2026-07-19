@@ -28,6 +28,25 @@ public class WedgeConfig
 
     public string escortAmount { get; set; } = "3";
 
+    // Scale the escort with the number of players in the raid, read from the same active-profile list
+    // as the level average. Off = always escortAmount.
+    public bool partyScaling { get; set; } = true;
+
+    // Guards by party size: entry 0 is solo, entry 1 is a duo, and the last entry covers anything
+    // larger. Shorter or longer lists work — the ends just clamp.
+    public List<int> guardsByPartySize { get; set; } = [3, 4, 6];
+
+    public string GuardsForParty(int players)
+    {
+        if (!partyScaling || guardsByPartySize.Count == 0)
+        {
+            return escortAmount;
+        }
+
+        var index = Math.Clamp(players - 1, 0, guardsByPartySize.Count - 1);
+        return guardsByPartySize[index].ToString();
+    }
+
     // Pin the boss + his escort to one zone so they land together.
     public bool singleZone { get; set; } = true;
 

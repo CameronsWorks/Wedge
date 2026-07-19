@@ -1,0 +1,45 @@
+{
+  "6a5be99e3a129fec056b645b": {
+    "itemTplToClone": "5e00c1ad86f774747333222c",
+    "parentId": "5a341c4086f77401f2541505",
+    "handbookParentId": "5b47574386f77428ca22b330",
+    "overrideProperties": {
+      "Name": "item_equipment_helmet_wedge_boss",
+      "ShortName": "item_equipment_helmet_wedge_boss",
+      "Description": "item_equipment_helmet_wedge_boss",
+      "Prefab": {
+        "path": "assets/content/items/equipment/helmet_wedge_boss/item_equipment_helmet_wedge_boss.bundle",
+        "rcid": ""
+      },
+      "RarityPvE": "Not_exist",
+      "CanSellOnRagfair": false,
+      "CanRequireOnRagfair": false,
+      "IsUnbuyable": true,
+      "IsUnsaleable": true,
+      "DiscardLimit": -1
+    },
+    "locales": {
+      "en": {
+        "name": "Team Wendy EXFIL (Wedge)",
+        "shortName": "EXFIL Wedge",
+        "description": "A Team Wendy EXFIL under a hand-cut cover, taped down at the seams and worn colourless. Black Division issue."
+      }
+    },
+    "fleaPriceRoubles": 0,
+    "handbookPriceRoubles": 62000,
+    "addtoInventorySlots": ["Headwear"],
+    "addtoModSlots": false,
+    "modSlot": [],
+    "addtoBots": false,
+    "addtoStaticLootContainers": false,
+    "staticLootContainers": [],
+    "addtoHallOfFame": false,
+    "hallOfFameSlots": [],
+    "addtoSpecialSlots": false,
+    "addtoSecureFilters": false,
+    "addtoTraders": false,
+    "traders": {},
+    "addWeaponPreset": false,
+    "weaponPresets": []
+  }
+}

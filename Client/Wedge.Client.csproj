@@ -17,12 +17,20 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="..\assets\icons\m8230.png" LogicalName="Wedge.Client.m8230.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="BepInEx"><HintPath>$(SptRoot)\BepInEx\core\BepInEx.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="0Harmony"><HintPath>$(SptRoot)\BepInEx\core\0Harmony.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="Assembly-CSharp"><HintPath>$(Managed)\Assembly-CSharp.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine"><HintPath>$(Managed)\UnityEngine.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.CoreModule"><HintPath>$(Managed)\UnityEngine.CoreModule.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.AIModule"><HintPath>$(Managed)\UnityEngine.AIModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.PhysicsModule"><HintPath>$(Managed)\UnityEngine.PhysicsModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.AssetBundleModule"><HintPath>$(Managed)\UnityEngine.AssetBundleModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.ImageConversionModule"><HintPath>$(Managed)\UnityEngine.ImageConversionModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.ParticleSystemModule"><HintPath>$(Managed)\UnityEngine.ParticleSystemModule.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="Comfort"><HintPath>$(Managed)\Comfort.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="CommonExtensions"><HintPath>$(Managed)\CommonExtensions.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="DissonanceVoip"><HintPath>$(Managed)\DissonanceVoip.dll</HintPath><Private>false</Private></Reference>
@@ -31,7 +39,7 @@
     <Reference Include="DrakiaXYZ-BigBrain"><HintPath>$(SptRoot)\BepInEx\plugins\DrakiaXYZ-BigBrain.dll</HintPath><Private>false</Private></Reference>
   </ItemGroup>
 
-  <Target Name="DeployToGame" AfterTargets="Build">
+  <Target Name="DeployToGame" AfterTargets="Build" Condition="'$(SkipDeploy)' != 'true'">
     <MakeDir Directories="$(SptRoot)\BepInEx\plugins\Wedge" />
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SptRoot)\BepInEx\plugins\Wedge" ContinueOnError="true" />
   </Target>

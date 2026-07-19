@@ -8,7 +8,7 @@ namespace Wedge.Server.Services;
 
 // Adds a forced Wedge boss wave to every enabled map at the given chance. Idempotent: it strips any
 // wave it previously added before re-adding, so OnLoad + the raid routers can all call it safely. The
-// chance is passed in (the raid-start router computes it from the raid's level).
+// chance and escort size are passed in (the raid-start router computes both from who's in the raid).
 [Injectable(InjectionType.Singleton)]
 public class SpawnInjector(
     DatabaseService databaseService,
@@ -17,7 +17,7 @@ public class SpawnInjector(
 {
     const string Marker = "wedge_test_";
 
-    public void Inject(double chance)
+    public void Inject(double chance, string escort)
     {
         var cfg = configService.Config;
         var maps = new HashSet<string>(cfg.enabledMaps, StringComparer.OrdinalIgnoreCase);
@@ -26,60 +26,78 @@ public class SpawnInjector(
         foreach (var location in databaseService.GetLocations().GetDictionary().Values)
         {
             var mapBase = location?.Base;
-            var waves = mapBase?.BossLocationSpawn;
-            if (waves == null)
+            if (mapBase?.BossLocationSpawn == null)
             {
                 continue;
             }
 
-            var id = mapBase!.Id?.ToLowerInvariant();
+            var id = mapBase.Id?.ToLowerInvariant();
             if (id == null || !maps.Contains(id))
             {
                 continue;
             }
 
-            waves.RemoveAll(w => w.TriggerId?.StartsWith(Marker) == true);
-
-            if (chance <= 0)
+            // Two raids starting close together — routine in co-op — would otherwise both rewrite the
+            // same wave list at once and can tear it. The lock token is the map itself so any mod that
+            // adopts the same convention serializes with us for free (RvR will); a private lock only
+            // guards Wedge against Wedge. Not covered: ABPS replaces the list wholesale at raid end,
+            // so a wave injected into the outgoing list is dropped for that one raid — rare, and it
+            // self-heals at the next raid start.
+            lock (mapBase)
             {
-                continue;
+                if (Apply(mapBase.BossLocationSpawn, id, chance, escort))
+                {
+                    injected++;
+                }
             }
-
-            var zone = waves.FirstOrDefault(w => !string.IsNullOrEmpty(w.BossZone))?.BossZone ?? "";
-            if (cfg.singleZone && zone.Contains(','))
-            {
-                zone = zone.Split(',')[0].Trim();
-            }
-
-            waves.Add(new BossLocationSpawn
-            {
-                BossName = "wedge",
-                BossEscortType = "wedgeguard",
-                BossEscortAmount = cfg.escortAmount,
-                BossChance = chance,
-                BossDifficulty = "normal",
-                BossEscortDifficulty = "normal",
-                BossZone = zone,
-                IsBossPlayer = false,
-                Time = -1,
-                Delay = 0,
-                TriggerId = Marker + id,
-                TriggerName = "",
-                IsRandomTimeSpawn = false,
-                IgnoreMaxBots = true,
-                ForceSpawn = true,
-                DependKarma = false,
-                DependKarmaPVE = false,
-                ShowOnTarkovMap = false,
-                ShowOnTarkovMapPvE = false,
-                Supports = null!,
-                SpawnMode = ["regular", "pve"],
-            });
-
-            injected++;
         }
 
-        logger.Info($"[Wedge] injected boss wave into {injected} map(s) (chance {chance:0}%, escort {cfg.escortAmount})");
+        logger.Info($"[Wedge] injected boss wave into {injected} map(s) (chance {chance:0}%, escort {escort})");
+    }
+
+    bool Apply(List<BossLocationSpawn> waves, string id, double chance, string escort)
+    {
+        var cfg = configService.Config;
+
+        waves.RemoveAll(w => w.TriggerId?.StartsWith(Marker) == true);
+
+        if (chance <= 0)
+        {
+            return false;
+        }
+
+        var zone = waves.FirstOrDefault(w => !string.IsNullOrEmpty(w.BossZone))?.BossZone ?? "";
+        if (cfg.singleZone && zone.Contains(','))
+        {
+            zone = zone.Split(',')[0].Trim();
+        }
+
+        waves.Add(new BossLocationSpawn
+        {
+            BossName = "wedge",
+            BossEscortType = "wedgeguard",
+            BossEscortAmount = escort,
+            BossChance = chance,
+            BossDifficulty = "normal",
+            BossEscortDifficulty = "normal",
+            BossZone = zone,
+            IsBossPlayer = false,
+            Time = -1,
+            Delay = 0,
+            TriggerId = Marker + id,
+            TriggerName = "",
+            IsRandomTimeSpawn = false,
+            IgnoreMaxBots = true,
+            ForceSpawn = true,
+            DependKarma = false,
+            DependKarmaPVE = false,
+            ShowOnTarkovMap = false,
+            ShowOnTarkovMapPvE = false,
+            Supports = null!,
+            SpawnMode = ["regular", "pve"],
+        });
+
+        return true;
     }
 }
 
@@ -94,7 +112,8 @@ public class WedgeSpawnLoader(
 {
     public Task OnLoad()
     {
-        injector.Inject(configService.Config.ChanceForLevel(configService.Config.baseLevel));
+        var cfg = configService.Config;
+        injector.Inject(cfg.ChanceForLevel(cfg.baseLevel), cfg.escortAmount);
         logger.Info("[Wedge] spawn injector ready");
         return Task.CompletedTask;
     }

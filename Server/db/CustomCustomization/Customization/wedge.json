@@ -1,0 +1,72 @@
+{
+  "6a5be90aa083b9f30fd263e5": {
+    "_id": "6a5be90aa083b9f30fd263e5",
+    "_name": "Wild_Wedge_head",
+    "_parent": "5cc085e214c02e000c6bea67",
+    "_type": "Item",
+    "_props": {
+      "AvailableAsDefault": false,
+      "Description": "Wild_Wedge_head",
+      "Name": "Wild_Wedge_head",
+      "ProfileVersions": [],
+      "ShortName": "Wild_Wedge_head",
+      "Side": ["Savage"],
+      "BodyPart": "Head",
+      "IntegratedArmorVest": false,
+      "Prefab": {
+        "path": "assets/content/characters/character/prefabs/head_boss_wedge.bundle",
+        "rcid": ""
+      },
+      "WatchPosition": { "x": 0, "y": 0, "z": 0 },
+      "WatchPrefab": { "path": "", "rcid": "" },
+      "WatchRotation": { "x": 0, "y": 0, "z": 0 }
+    },
+    "_proto": "5cde9ff17d6c8b0474535daa"
+  },
+  "6a5be92fc5388119b044f7fb": {
+    "_id": "6a5be92fc5388119b044f7fb",
+    "_name": "wild_Wedge_body",
+    "_parent": "5cc0868e14c02e000c6bea68",
+    "_type": "Item",
+    "_props": {
+      "AvailableAsDefault": false,
+      "Description": "wild_Wedge_body",
+      "Name": "wild_Wedge_body",
+      "ProfileVersions": [],
+      "ShortName": "wild_Wedge_body",
+      "Side": ["Savage"],
+      "BodyPart": "Body",
+      "IntegratedArmorVest": false,
+      "Prefab": {
+        "path": "assets/content/characters/character/prefabs/top_boss_wedge.bundle",
+        "rcid": ""
+      },
+      "WatchPosition": { "x": 0, "y": 0, "z": 0 },
+      "WatchPrefab": { "path": "", "rcid": "" },
+      "WatchRotation": { "x": 0, "y": 0, "z": 0 }
+    }
+  },
+  "6a5be954d59f1c65411fe569": {
+    "_id": "6a5be954d59f1c65411fe569",
+    "_name": "Wild_Wedge_feet",
+    "_parent": "5cc0869814c02e000a4cad94",
+    "_type": "Item",
+    "_props": {
+      "AvailableAsDefault": false,
+      "Description": "Wild_Wedge_feet",
+      "Name": "Wild_Wedge_feet",
+      "ProfileVersions": [],
+      "ShortName": "Wild_Wedge_feet",
+      "Side": ["Savage"],
+      "BodyPart": "Feet",
+      "IntegratedArmorVest": false,
+      "Prefab": {
+        "path": "assets/content/characters/character/prefabs/pants_boss_wedge.bundle",
+        "rcid": ""
+      },
+      "WatchPosition": { "x": 0, "y": 0, "z": 0 },
+      "WatchPrefab": { "path": "", "rcid": "" },
+      "WatchRotation": { "x": 0, "y": 0, "z": 0 }
+    }
+  }
+}

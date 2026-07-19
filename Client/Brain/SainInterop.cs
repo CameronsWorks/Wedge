@@ -13,6 +13,7 @@ namespace Wedge.Client.Brain
         static PropertyInfo _spawnControllerInstance;
         static MethodInfo _getSain;
         static PropertyInfo _activeLayer;
+        static PropertyInfo _hasEnemy;
 
         static void EnsureInit()
         {
@@ -28,6 +29,7 @@ namespace Wedge.Client.Brain
                 }
                 var component = AccessTools.TypeByName("SAIN.Components.BotComponent");
                 _activeLayer = component?.GetProperty("ActiveLayer", BindingFlags.Public | BindingFlags.Instance);
+                _hasEnemy = component?.GetProperty("HasEnemy", BindingFlags.Public | BindingFlags.Instance);
             }
             catch (Exception ex)
             {
@@ -40,14 +42,40 @@ namespace Wedge.Client.Brain
         public static bool SainOwns(BotOwner bot)
         {
             EnsureInit();
-            if (_spawnControllerInstance == null || _getSain == null || _activeLayer == null) return false;
+            if (_activeLayer == null) return false;
+            try
+            {
+                var comp = GetComponent(bot);
+                if (comp == null) return false;
+                return (int)_activeLayer.GetValue(comp) != 0;
+            }
+            catch { return false; }
+        }
+
+        // The resolved SAIN BotComponent, or null when SAIN is absent or hasn't registered this bot.
+        public static object GetComponent(BotOwner bot)
+        {
+            EnsureInit();
+            if (_spawnControllerInstance == null || _getSain == null || bot == null) return null;
             try
             {
                 var controller = _spawnControllerInstance.GetValue(null);
-                if (controller == null) return false;
-                var comp = _getSain.Invoke(controller, new object[] { bot });
-                if (comp == null) return false;
-                return (int)_activeLayer.GetValue(comp) != 0;
+                if (controller == null) return null;
+                return _getSain.Invoke(controller, new object[] { bot });
+            }
+            catch { return null; }
+        }
+
+        // Whether the bot currently has someone to fight. Drives which order Wedge picks; without SAIN
+        // we fall back to the engine's own goal enemy.
+        public static bool HasEnemy(BotOwner bot)
+        {
+            EnsureInit();
+            try
+            {
+                var comp = GetComponent(bot);
+                if (comp != null && _hasEnemy != null) return (bool)_hasEnemy.GetValue(comp);
+                return bot?.Memory?.GoalEnemy != null;
             }
             catch { return false; }
         }
