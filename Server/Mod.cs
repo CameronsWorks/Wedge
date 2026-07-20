@@ -17,7 +17,7 @@ public record ModMetadata : AbstractModMetadata
     public override string Name { get; init; } = "Wedge";
     public override string Author { get; init; } = "Sipto";
     public override List<string>? Contributors { get; init; }
-    public override SemanticVersioning.Version Version { get; init; } = new(2, 0, 1);
+    public override SemanticVersioning.Version Version { get; init; } = new(2, 0, 2);
     public override SemanticVersioning.Range SptVersion { get; init; } = new("~4.0.0");
     public override List<string>? Incompatibilities { get; init; }
     public override Dictionary<string, SemanticVersioning.Range>? ModDependencies { get; init; } = new()
@@ -35,11 +35,12 @@ public record ModMetadata : AbstractModMetadata
     public override string License { get; init; } = "MIT";
 }
 
-// Registers the two custom roles and their faction. Runs last (int.MaxValue) so the
-// built-in sides (savage/usec/bear) MoreBots seeds are already present when we wire the
-// reciprocal hostility below — the reverse AddEnemyByFaction("side","wedge") looks "wedge"
-// up in FactionService.Factions, so the faction is created before that call.
-[Injectable(InjectionType = InjectionType.Singleton, TypePriority = int.MaxValue)]
+// Registers the two custom roles/faction and all custom items. TypePriority sits in a window:
+// after MoreBotsAPI (400005) seeds the built-in sides and WTT/BlackDiv add the tpls his kit
+// borrows (400002/480085), but before SaveCallbacks (700000) loads saved profiles — the boot
+// validator marks any profile invalid whose inventory holds a tpl it can't resolve, so late
+// item registration (2.0.1 used int.MaxValue) bricked every profile that kept his gear.
+[Injectable(InjectionType = InjectionType.Singleton, TypePriority = 500000)]
 public class WedgeRegistration(
     MoreBotsAPI moreBotsLib,
     MoreBotsCustomBotTypeService customBotTypeService,
@@ -47,6 +48,7 @@ public class WedgeRegistration(
     WTTServerCommonLib.WTTServerCommonLib commonLib,
     Services.KitVerifier kitVerifier,
     ConfigServer configServer,
+    SaveServer saveServer,
     ISptLogger<WedgeRegistration> logger
 ) : IOnLoad
 {
@@ -72,6 +74,11 @@ public class WedgeRegistration(
         await commonLib.CustomCustomizationService.CreateCustomCustomizations(asm);
         await commonLib.CustomVoiceService.CreateCustomVoices(asm);
         await commonLib.CustomItemServiceExtended.CreateCustomItems(asm);
+
+        // Profiles already in memory means we ran after SaveCallbacks and the window above is
+        // broken — every saved profile holding Wedge gear just got flagged invalid.
+        if (saveServer.GetProfiles().Count > 0)
+            logger.Error("[Wedge] items registered after profiles loaded — TypePriority must stay below 700000");
 
         // db\CustomHeads carries a second, PMC-side copy of his face so players can pick it in
         // character creation; his own entry above stays Savage-only and untouched.

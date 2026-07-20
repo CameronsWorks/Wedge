@@ -97,6 +97,12 @@ So to remove Wedge safely, **leave `BepInEx\patchers\Wedge\` in place** and dele
 The patcher on its own does nothing but teach the game two extra names, so it's harmless to keep. He stops
 spawning and your profile still loads.
 
+The other catch is his gear. Any Wedge item still in your stash, kit or mail when the server mod goes away
+— the helmet, the goggles, the 8230s — is an item the server no longer recognises, and SPT flags the whole
+profile invalid at the next boot. Sell or drop his gear before uninstalling, or set
+`removeModItemsFromProfile` to `true` in `SPT\SPT_Data\configs\core.json` for one restart and let the
+server strip what's left (it deletes attachments with their parent, so a helmet goes goggles and all).
+
 ## Build
 
 `dotnet build -c Release` with the .NET SDK 9+. Three projects: `Client` and `Prepatch` on net472, `Server`
