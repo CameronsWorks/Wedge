@@ -4,7 +4,7 @@ using BepInEx.Logging;
 
 namespace Wedge.Client
 {
-    [BepInPlugin(PluginId, "Wedge", "2.0.2")]
+    [BepInPlugin(PluginId, "Wedge", "2.1.0")]
     [BepInDependency("com.fika.core", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency("xyz.drakia.bigbrain")]
     public class WedgePlugin : BaseUnityPlugin

@@ -1,11 +1,13 @@
 using System.Reflection;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.DI;
+using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Eft.Common;
 using SPTarkov.Server.Core.Models.Spt.Config;
 using SPTarkov.Server.Core.Models.Spt.Mod;
 using SPTarkov.Server.Core.Models.Utils;
 using SPTarkov.Server.Core.Servers;
+using SPTarkov.Server.Core.Services;
 using MoreBotsServer;
 using MoreBotsServer.Services;
 
@@ -17,7 +19,7 @@ public record ModMetadata : AbstractModMetadata
     public override string Name { get; init; } = "Wedge";
     public override string Author { get; init; } = "Sipto";
     public override List<string>? Contributors { get; init; }
-    public override SemanticVersioning.Version Version { get; init; } = new(2, 0, 2);
+    public override SemanticVersioning.Version Version { get; init; } = new(2, 1, 0);
     public override SemanticVersioning.Range SptVersion { get; init; } = new("~4.0.0");
     public override List<string>? Incompatibilities { get; init; }
     public override Dictionary<string, SemanticVersioning.Range>? ModDependencies { get; init; } = new()
@@ -49,6 +51,7 @@ public class WedgeRegistration(
     Services.KitVerifier kitVerifier,
     ConfigServer configServer,
     SaveServer saveServer,
+    DatabaseService databaseService,
     ISptLogger<WedgeRegistration> logger
 ) : IOnLoad
 {
@@ -109,6 +112,26 @@ public class WedgeRegistration(
             };
         }
 
+        // Loot caps. The generator resolves both of these tables by role name and falls back to
+        // "default" — whose spawn-limit entry is EMPTY, so nothing stopped a bot drawing the
+        // cardholder case four times from the generic pools. One cardholder, one euro wad, and
+        // the wedge stack table keeps that wad at 5k or under.
+        Dictionary<string, double> euroStacks = new() { ["1000"] = 10, ["2500"] = 6, ["5000"] = 2 };
+        foreach (var role in new[] { "wedge", "wedgeguard" })
+        {
+            botConfig.ItemSpawnLimits[role] = new()
+            {
+                // The cardholder is Wedge's alone; the guards get none at all.
+                [new MongoId("619cbf9e0a7c3a1a2731940a")] = role == "wedge" ? 1 : 0, // keycard holder case
+                [new MongoId("569668774bdc2da2298b4568")] = 1, // euros, one stack
+            };
+            botConfig.CurrencyStackSize[role] =
+                new Dictionary<string, Dictionary<string, double>>(botConfig.CurrencyStackSize["default"])
+                {
+                    ["569668774bdc2da2298b4568"] = euroStacks,
+                };
+        }
+
         customBotTypeService.AddCustomWildSpawnTypeNames(new Dictionary<int, string>
         {
             { WedgeType, "wedge" },
@@ -121,12 +144,114 @@ public class WedgeRegistration(
         faction.RevengeAfterRaids = false;
         factionService.Factions["wedge"] = faction;
 
+        var botDb = databaseService.GetBots().Types;
+        var us = new[] { (WildSpawnType)WedgeType, (WildSpawnType)WedgeGuardType };
         List<string> roles = ["wedge", "wedgeguard"];
-        foreach (var side in new[] { "savage", "usec", "bear" })
+
+        // Add our two types to one Mind list on a single db entry by name. Returns whether the entry
+        // existed. This is the reverse direction the MoreBots API mishandles for CUSTOM members.
+        bool SeedEntry(string dbName, bool friendly)
+        {
+            if (!botDb.TryGetValue(dbName, out var t) || t?.BotDifficulty is null) return false;
+            foreach (var difficulty in t.BotDifficulty.Values)
+            {
+                var mind = difficulty.Mind;
+                if (mind is null) continue;
+                var list = friendly ? mind.FriendlyBotTypes ??= [] : mind.EnemyBotTypes ??= [];
+                foreach (var ours in us)
+                    if (!list.Contains(ours)) list.Add(ours);
+            }
+            return true;
+        }
+
+        // Walk a faction's members, resolving each custom int to its db key ourselves and seeding it —
+        // the API can't (it doesn't lowercase custom names to match the key). Works only for mods that
+        // published their int->name map via AddCustomWildSpawnTypeNames (Black Division, RUAF do).
+        int SeedReverse(string factionName, bool friendly)
+        {
+            if (!factionService.Factions.TryGetValue(factionName, out var f)) return 0;
+            var reached = 0;
+            foreach (var member in f.GetAllBotTypes())
+            {
+                var name = (customBotTypeService.GetCustomTypeNameOrEmpty((int)member) ?? "").ToLowerInvariant();
+                if (name.Length > 0 && SeedEntry(name, friendly)) reached++;
+            }
+            return reached;
+        }
+
+        // Hostile to everything that isn't Black Division. "savage" already folds in scavs, the scav
+        // bosses and their guards, and raiders; usec/bear are the two PMC sides. rogues (exUsec plus
+        // the Goons), cultists, the Partisan, and the infected sit outside savage, so name them too.
+        // These are all vanilla-membered, so the string reverse overload resolves cleanly.
+        foreach (var side in new[] { "savage", "usec", "bear", "rogues", "cultists", "partisan", "infected" })
         {
             factionService.AddEnemyByFaction(roles, side);
             factionService.AddEnemyByFaction(side, "wedge");
         }
+
+        // The BTR is friendly — put its gunner (shooterBTR) on our friendly list, which IsPlayerEnemy
+        // checks before the enemy list, so we never open up on it.
+        foreach (var role in roles)
+            if (botDb.TryGetValue(role, out var rt) && rt?.BotDifficulty is not null)
+                foreach (var difficulty in rt.BotDifficulty.Values)
+                {
+                    var mind = difficulty.Mind;
+                    if (mind is null) continue;
+                    var fr = mind.FriendlyBotTypes ??= [];
+                    if (!fr.Contains((WildSpawnType)46)) fr.Add((WildSpawnType)46);
+                }
+
+        // He leads Black Division, so the two mods' factions fight as one side. FriendlyBotTypes both
+        // ways — which also keeps a stray grenade from feeding BD's revenge tracking into a war.
+        factionService.AddFriendlyByFaction(roles, "blackdiv");
+        SeedReverse("blackdiv", friendly: true);
+
+        // RUAF and UNTAR are optional faction mods; wire mutual hostility only when they're present.
+        // Forward (their types onto our enemy list) is the API. Reverse is by db name: RUAF publishes
+        // its int->name map so SeedReverse walks the faction; UNTAR doesn't, so seed its known boss/
+        // follower entries directly (they degrade to a no-op if UNTAR ever renames them).
+        var optional = new List<string>();
+        if (factionService.Factions.ContainsKey("ruaf"))
+        {
+            factionService.AddEnemyByFaction(roles, "ruaf");
+            optional.Add($"ruaf({SeedReverse("ruaf", friendly: false)})");
+        }
+        if (factionService.Factions.ContainsKey("untar"))
+        {
+            factionService.AddEnemyByFaction(roles, "untar");
+            var untarReached = new[] { "bossuntarlead", "bossuntarofficer", "followeruntar", "followeruntarmarksman" }
+                .Count(name => SeedEntry(name, friendly: false));
+            optional.Add($"untar({untarReached})");
+        }
+
+        // Read the result back out of the db: every path above fails quietly on a missing faction, db
+        // entry or difficulty list, and a silent no-op means they don't fight who they should.
+        botDb.TryGetValue("wedge", out var wedgeType);
+        var wedgeFriendly = wedgeType?.BotDifficulty?["normal"].Mind?.FriendlyBotTypes;
+        var bdTypes = factionService.Factions.TryGetValue("blackdiv", out var bd) ? bd.GetAllBotTypes() : [];
+        var bdOnWedge = wedgeFriendly?.Count(t => bdTypes.Contains(t)) ?? 0;
+        if (!botDb.TryGetValue("blackdivlead", out var bdLead)) botDb.TryGetValue("blackDivLead", out bdLead);
+        var onBdLead = bdLead?.BotDifficulty?["normal"].Mind?.FriendlyBotTypes?
+            .Count(t => (int)t is WedgeType or WedgeGuardType) ?? 0;
+        if (bdOnWedge > 0 && onBdLead == 2)
+            logger.Info($"[Wedge] allied with blackdiv ({bdOnWedge} of their types on him; their lead lists both of ours)");
+        else
+            logger.Warning($"[Wedge] blackdiv alliance readback failed: {bdOnWedge} bd types on him, {onBdLead}/2 of ours on their lead");
+
+        // Enemy readback: one sentinel per core (always-present) faction on him, plus a plain scav
+        // counting him an enemy (the reverse). Trust the sentinel count, not the absence of errors.
+        // assault(scavs) bossKilla(scav bosses) pmcBot(raiders) exUsec(rogues) sectantWarrior(cultists)
+        // bossPartisan pmcBEAR pmcUSEC infectedAssault — one per core target faction.
+        int[] enemySentinels = { 1, 6, 9, 24, 20, 47, 51, 52, 60 };
+        var wedgeEnemies = wedgeType?.BotDifficulty?["normal"].Mind?.EnemyBotTypes;
+        var sentinelsOn = wedgeEnemies is null ? 0 : enemySentinels.Count(s => wedgeEnemies.Contains((WildSpawnType)s));
+        var scavFightsBack = botDb.TryGetValue("assault", out var scav)
+            && (scav?.BotDifficulty?["normal"].Mind?.EnemyBotTypes?.Contains((WildSpawnType)WedgeType) ?? false);
+        var optionalNote = optional.Count > 0 ? $"; optional: {string.Join(", ", optional)}" : "; no optional faction mods";
+        if (sentinelsOn == enemySentinels.Length && scavFightsBack)
+            logger.Info($"[Wedge] hostile to {wedgeEnemies!.Count} bot types (all 7 core factions present; scavs fight back{optionalNote})");
+        else
+            logger.Warning($"[Wedge] enemy wiring incomplete: {sentinelsOn}/{enemySentinels.Length} sentinels on him, scav-reverse={scavFightsBack}{optionalNote}");
 
         logger.Info($"[Wedge] registered roles {WedgeType}/{WedgeGuardType} under faction 'wedge'");
     }

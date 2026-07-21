@@ -17,6 +17,10 @@ like something you know how to read. He calls orders his guards actually follow 
 the Black Division Operator escort spawns in the same zone and rushes with him, so you get the squad
 arriving together rather than trickling in.
 
+He and the wider Black Division are one side: his squad and any other Black Division patrol treat each
+other as allies, never targets. And player scavs pay no Fence rep for killing him or his guards — they're
+an invading faction like Raiders or Rogues, not scav bosses.
+
 The gas is real. His 8230 leaves a cloud that drains anyone standing in it without a filter, stings your
 eyes and sets you coughing. A full-face mask shuts it out completely — his own M53A1, a GP-5 or GP-7; a
 respirator like the Ops-Core SOTR or a 3M keeps it out of your lungs but leaves your eyes stinging. The list
